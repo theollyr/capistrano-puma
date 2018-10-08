@@ -21,7 +21,7 @@ namespace :puma do
         if test "[ -f #{fetch(:puma_pid)} ]" and test :kill, "-0 $( cat #{fetch(:puma_pid)} )"
           info 'Already Puma is running'
         else
-          within current_path do
+          within fetch(:puma_target_path, current_path) do
             with rack_env: fetch(:puma_env) do
               execute :puma, "-C #{fetch(:puma_conf)} --daemon"
             end
@@ -35,7 +35,7 @@ namespace :puma do
     desc "#{command} puma"
     task command do
       on roles (fetch(:puma_role)) do |role|
-        within current_path do
+        within fetch(:puma_target_path, current_path) do
           git_plugin.puma_switch_user(role) do
             with rack_env: fetch(:puma_env) do
               if test "[ -f #{fetch(:puma_pid)} ]"
@@ -60,7 +60,7 @@ namespace :puma do
     desc "#{command} puma"
     task command do
       on roles (fetch(:puma_role)) do |role|
-        within current_path do
+        within fetch(:puma_target_path, current_path) do
           git_plugin.puma_switch_user(role) do
             with rack_env: fetch(:puma_env) do
               if test "[ -f #{fetch(:puma_pid)} ]" and test :kill, "-0 $( cat #{fetch(:puma_pid)} )"
